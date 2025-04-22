@@ -20,35 +20,40 @@ public class pay_controller {
 	@Resource(name="pay_DTO")
 	pay_DTO dto;
 	
-	//결제 시스템 API 가동 및 결제 진행
-	@PostMapping("/pay3.do")		
-		 public String pay3(@ModelAttribute pay_DTO pd, Model m) throws Exception {//걸제 예외처리		
-		String data1 = pd.getProduct_code();//상품코드 
-		String data2 = pd.getPrice();//가격
-		String mid = "INIpayTest";
-		String signKey = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
-		String goodcode = data1; 
-		String mKey = SignatureUtil.hash(signKey, "SHA-256");
-		String timestamp = SignatureUtil.getTimestamp();
-		String orderNumber = mid+"_"+goodcode; //고유값 =>카드영수증에 출력되는 오더번호
-		String price = data2;
-		Map<String, String> signParam = new HashMap<String, String>();
-		signParam.put("oid", orderNumber);
-		signParam.put("price", price);
-		signParam.put("timestamp", timestamp);
-		String signature = SignatureUtil.makeSignature(signParam);
-		
-		
-		m.addAttribute("mid", mid);
-		m.addAttribute("mKey", mKey);
-		m.addAttribute("orderNumber", orderNumber);
-		m.addAttribute("timestamp", timestamp);
-		m.addAttribute("signature",signature);
-		m.addAttribute("pd", pd);
-		
-	      return "/pay3.html";
+	 //결제시스템 API 가동 및 결제 진행
+	/*
+    @PostMapping("/pay3.do")
+    public String pay3(@ModelAttribute pay_DTO pd, Model m) throws Exception {
+       
+       String data1 = pd.getProduct_code(); //상품코드
+       String data2 = pd.getPrice(); //가격
+
+       String mid = "INIpayTest";
+       String signKey = "SU5JTElURV9UUklQTEVERVNfS0VZU1RS";
+       String goodcode = data1; 
+       String mKey = SignatureUtil.hash(signKey, "SHA-256");
+       String timestamp = SignatureUtil.getTimestamp();
+       String orderNumber = mid+ "_" + goodcode; //고유값 -> 카드영수증에 출력되는 오더번호
+       String price = data2;
+
+       Map<String, String> signParam = new HashMap<String, String>();
+       signParam.put("oid", orderNumber);
+       signParam.put("price", price);
+       signParam.put("timestamp", timestamp);
+
+       String signature = SignatureUtil.makeSignature(signParam);
+       
+       m.addAttribute("mid", mid);
+       m.addAttribute("mKey", mKey);
+       m.addAttribute("timestamp", timestamp);
+       m.addAttribute("orderNumber", orderNumber);
+       m.addAttribute("signature", signature);
+       m.addAttribute("pd", pd);
+       
+       return "/pay3.html";
+
 	}
-	
+	*/
 	
 	//결제할 고객 데이터를 입력하는 메소드
 	  @PostMapping("/pay2.do")

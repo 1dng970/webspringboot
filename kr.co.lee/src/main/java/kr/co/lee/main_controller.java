@@ -5,7 +5,9 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,8 +38,57 @@ import jakarta.servlet.http.HttpServletResponse;
 @Controller
 public class main_controller {
 	Logger log = LoggerFactory.getLogger(this.getClass()); 
-	
 	PrintWriter pw = null;
+	
+	@Autowired
+	api_service asv;
+	
+	
+	@CrossOrigin(origins="*",allowedHeaders= "*")//에러 방지 
+	@PostMapping("/ajax2.do")
+	public String ajax2(HttpServletResponse res,
+			@RequestParam(name="CID")String CID,
+			@RequestParam(name="CNAME")String CNAME
+			) throws Throwable {
+		this.pw =res.getWriter();
+		/*
+		this.log.info(CNAME);
+		this.log.info(CID);
+		*/
+		Map<String, String> all = new HashMap<>();
+		all.put("CID",CID);
+		all.put("CNAME",CNAME);	
+		
+		int result = this.asv.insert_cms(all);
+		if(result > 0) {
+			this.pw.print("ok");
+		}
+		else {
+			this.pw.print("no");
+			
+		}
+		this.pw.close();
+		return null;
+	}
+		
+	//@RequestHeader 보안값 => 넘어오면출력
+	//ajax.jsp와 함께 사용하는 API 통신 FormData form 태그 => GET,POST
+	@PostMapping("/ajax.do")
+	public String ajax(@RequestParam("product")String product,
+			@RequestHeader("mkey")String mkey,
+			HttpServletResponse res) throws Exception {
+        this.pw= res.getWriter();
+		this.log.info(mkey); //API 접근에 대한 보안키 (a123456)
+		
+		if(mkey.equals("a123456")) { //equals, ==			
+			this.pw.print("ok");
+		}else {
+			this.pw.print("Key Error");
+		}		
+				
+		return null;
+	}
+	
 	
 	@Resource(name="membership_dto")
 	membership_DTO dto;
